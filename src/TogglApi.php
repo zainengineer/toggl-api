@@ -11,12 +11,21 @@ class TogglApi
     protected $api_token = '';
 
     protected $client;
+    /** @var  \GuzzleHttp\Psr7\Request */
+    public $oLastRequest;
 
     public function __construct($api_token)
     {
         $this->api_token = $api_token;
+        // Create a handler stack that has all of the default middlewares attached
+        $handler = \GuzzleHttp\HandlerStack::create();
+        $handler->push(\GuzzleHttp\Middleware::mapRequest(function (\GuzzleHttp\Psr7\Request $request) {
+            $this->oLastRequest = $request;
+            return $request;
+        }));
         $this->client = new Client([
             'base_uri' => 'https://www.toggl.com/api/v8/',
+            'handler' => $handler,
             'auth' => [$this->api_token, 'api_token']
         ]);
     }
@@ -537,5 +546,9 @@ class TogglApi
     public function deleteTimeEntry($timeEntryId)
     {
         return $this->DELETE('time_entries/'.$timeEntryId);
+    }
+    public function getClient()
+    {
+        return $this->client;
     }
 }
