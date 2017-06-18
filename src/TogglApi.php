@@ -23,15 +23,9 @@ class TogglApi
 
     private function GET($endpoint, $body = array(), $query = array())
     {
-        try {
             $response = $this->client->get($endpoint, ['body' => json_encode($body), 'query' => $query]);
             return $this->checkResponse($response);
-        } catch (ClientException $e) {
-            return (object) [
-                'success' => false,
-                'message' => $e->getMessage()
-            ];
-        }
+
     }
 
     private function POST($endpoint, $body = array(), $query = array())
@@ -76,7 +70,7 @@ class TogglApi
     private function checkResponse($response)
     {
         if ($response->getStatusCode() == 200) {
-            $data = json_decode($response->getBody());
+            $data = json_decode($response->getBody(),true);
             if (is_object($data) && isset($data->data)) {
                 $data = $data->data;
             }
@@ -520,9 +514,9 @@ class TogglApi
         return $this->GET('time_entries/current');
     }
 
-    public function getTimeEntries()
+    public function getTimeEntries($args)
     {
-        return $this->GET('time_entries');
+        return $this->GET('time_entries',[],$args);
     }
 
     public function getTimeEntriesInRange($start, $end)
