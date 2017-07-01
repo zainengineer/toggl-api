@@ -80,8 +80,8 @@ class TogglApi
     {
         if ($response->getStatusCode() == 200) {
             $data = json_decode($response->getBody(),true);
-            if (is_object($data) && isset($data->data)) {
-                $data = $data->data;
+            if (is_array($data) && array_key_exists('data',$data)) {
+                $data = $data['data'];
             }
             return $data;
         }
