@@ -32,7 +32,13 @@ class TogglApi
 
     private function GET($endpoint, $body = array(), $query = array())
     {
-            $response = $this->client->get($endpoint, ['body' => json_encode($body), 'query' => $query]);
+        $options = [
+          'query' => $query,
+        ];
+        if ($body){
+            $options['body'] = json_encode($body);
+        }
+            $response = $this->client->get($endpoint, $options);
             return $this->checkResponse($response);
 
     }
